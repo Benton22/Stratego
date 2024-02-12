@@ -1,25 +1,12 @@
 import pygame
 import sys
-
-# Initialize Pygame
 pygame.init()
 
-height = 1000
-width = height * 10 / 12
-size = width, height
-black = 0, 0, 0
-background = 43,43,43
-white = 255, 255, 255
-screen = pygame.display.set_mode(size)
+from Screens.Board import BoardScreen
+from Screens.Menu import MenuScreen
+from Logic.Buttons import BasicButton
 
-pygame.display.set_caption("Stratego")
-
-
-
-font = pygame.font.Font(pygame.font.get_default_font(), 32)
-text = font.render('Stratego', True, white)
-textRect = text.get_rect()
-textRect.center = (width // 2, height // 2)
+ScreenIndex = 1
 
 while True:
     for event in pygame.event.get():
@@ -27,11 +14,16 @@ while True:
             pygame.quit()
             sys.exit()
 
-    # Clear the screen
-    screen.fill(background)
+    height = 1000
+    width = height * 10 / 12
+    size = width, height
+    black = 0, 0, 0
+    background = 43,43,43
+    white = 255, 255, 255
+    screen = pygame.display.set_mode(size)
 
-    screen.blit(text, textRect)
-
+    if ScreenIndex == 1: MenuScreen(screen)
+    elif ScreenIndex == 2: BoardScreen(screen)
 
     # Update display
     pygame.display.flip()
