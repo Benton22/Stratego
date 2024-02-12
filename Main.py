@@ -2,9 +2,11 @@ import pygame
 import sys
 pygame.init()
 
+from Screens.Logic.Variables.Globals import globalheight, globalwidth, globalsize, globalbackground
 from Screens.Board import BoardScreen
 from Screens.Menu import MenuScreen
 from Screens.Logic.Buttons import BasicButton
+
 
 ScreenIndex = [1]
 
