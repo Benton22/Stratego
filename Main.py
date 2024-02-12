@@ -4,9 +4,9 @@ pygame.init()
 
 from Screens.Board import BoardScreen
 from Screens.Menu import MenuScreen
-from Logic.Buttons import BasicButton
+from Screens.Logic.Buttons import BasicButton
 
-ScreenIndex = 1
+ScreenIndex = [1]
 
 while True:
     for event in pygame.event.get():
@@ -22,8 +22,9 @@ while True:
     white = 255, 255, 255
     screen = pygame.display.set_mode(size)
 
-    if ScreenIndex == 1: MenuScreen(screen)
-    elif ScreenIndex == 2: BoardScreen(screen)
 
+    if ScreenIndex[0] == 1: MenuScreen(screen, ScreenIndex)
+    elif ScreenIndex[0] == 2: BoardScreen(screen, ScreenIndex)
+    
     # Update display
     pygame.display.flip()
