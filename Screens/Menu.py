@@ -1,12 +1,12 @@
 import pygame
 import sys
 from .Logic.Buttons import BasicButton
-from .Logic.Variables.Globals import globalheight, globalwidth, globalsize, globalbackground
+from .Logic.Variables.Globals import globalheight, globalwidth, globalsize, globalbackground, globalwider
 
 
 
-height = 1000
-width = height * 10 / 12
+height = globalheight
+width = globalwider
 size = width, height
 black = 0, 0, 0
 background = 43,43,43

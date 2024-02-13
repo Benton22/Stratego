@@ -27,8 +27,8 @@ class GridLines():
 
 #standard grid
 for i in range(0, gridSize):
-    gridLinesH.append (GridLines(0, (i * height/12) + height/12-3, width, 6))
-    gridLinesV.append (GridLines((i * height/12) + height/12, height/12, 6, width))
+    gridLinesH.append (GridLines(0, (i * height/12) + height/12-3, width+6, 6))
+    gridLinesV.append (GridLines((i * height/12), height/12, 6, width))
 #filling in the gaps
 gridLineFiller.append(GridLines(0, height/2, 2 * width/10 + 3, 6))
 gridLineFiller.append(GridLines(4 * width/10 + 3, height/2, 2 * width/10, 6))
@@ -53,7 +53,7 @@ def BoardScreen(screen, CurrentScreenIndex):
         for gridLine in range(len(gridLinesH)):
             if gridLine != 5:
                 pygame.draw.rect(screen, black, gridLinesH[gridLine].outerLine)
-            if gridLine != 2 and gridLine != 6:
+            if gridLine != 3 and gridLine != 7:
                 pygame.draw.rect(screen, black, gridLinesV[gridLine].outerLine)
 
         for gridLine in range(len(gridLineFiller)):
@@ -62,7 +62,7 @@ def BoardScreen(screen, CurrentScreenIndex):
         for gridLine in range(len(gridLinesH)):
             if gridLine != 5:
                 pygame.draw.rect(screen, white, gridLinesH[gridLine].innerLine)
-            if gridLine != 2 and gridLine != 6:
+            if gridLine != 3 and gridLine != 7:
                 pygame.draw.rect(screen, white, gridLinesV[gridLine].innerLine)
 
         for gridLine in range(len(gridLineFiller)):

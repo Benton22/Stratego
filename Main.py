@@ -2,14 +2,14 @@ import pygame
 import sys
 pygame.init()
 
-from Screens.Logic.Variables.Globals import globalheight, globalwidth, globalsize, globalbackground
+from Screens.Logic.Variables.Globals import globalheight, globalwidth, globalsize, globalbackground, globalwider
 from Screens.Board import BoardScreen
 from Screens.Menu import MenuScreen
 from Screens.Logic.Buttons import BasicButton
 
 height = globalheight
 width = globalwidth
-size = globalsize
+size = globalwider, globalheight
 black = 0, 0, 0
 background = globalbackground
 white = 255, 255, 255
