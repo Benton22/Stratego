@@ -47,5 +47,4 @@ def MenuScreen(screen, CurrentScreenIndex):
 
         # Update display
         pygame.display.flip()
-    print(CurrentScreenIndex)
     return CurrentScreenIndex

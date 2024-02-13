@@ -1,6 +1,7 @@
 import pygame
 import sys
 from Screens.Logic.Variables.Globals import globalheight, globalwidth, globalsize, globalbackground
+from Screens.Logic.ActualGame import drawGame
 
 height = globalheight
 width = globalwidth
@@ -66,6 +67,8 @@ def BoardScreen(screen, CurrentScreenIndex):
 
         for gridLine in range(len(gridLineFiller)):
             pygame.draw.rect(screen, white, gridLineFiller[gridLine].innerLine)
+        
+        drawGame(screen)
 
         # Update display
         pygame.display.flip()
