@@ -1,7 +1,7 @@
 import pygame
 import sys
-from Screens.Logic.Buttons import BasicButton
-from Screens.Logic.Variables.Globals import globalheight, globalwidth, globalsize, globalbackground
+from .Logic.Buttons import BasicButton
+from .Logic.Variables.Globals import globalheight, globalwidth, globalsize, globalbackground
 
 
 

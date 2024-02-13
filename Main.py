@@ -26,6 +26,7 @@ while True:
 
     if ScreenIndex[0] == 1: MenuScreen(screen, ScreenIndex)
     elif ScreenIndex[0] == 2: BoardScreen(screen, ScreenIndex)
+
     
     # Update display
     pygame.display.flip()
