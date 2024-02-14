@@ -6,6 +6,7 @@ from Screens.Logic.Variables.Globals import globalheight, globalwidth, globalsiz
 from Screens.Board import BoardScreen
 from Screens.Menu import MenuScreen
 from Screens.Logic.Buttons import BasicButton, ButtonBacker
+from Pieces.Pieces import Piece
 
 height = globalheight
 width = globalwidth

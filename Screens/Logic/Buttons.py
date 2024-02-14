@@ -63,6 +63,9 @@ class PieceSpawner:
         mouseX, mouseY = pygame.mouse.get_pos()
         self.hovering = self.innerButton.collidepoint(mouseX, mouseY)
         return self.hovering
+    
+    def spawn_type(self):
+        return self.type
 
 
 class ButtonBacker():
