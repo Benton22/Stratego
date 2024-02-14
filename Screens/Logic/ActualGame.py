@@ -24,6 +24,12 @@ for i in range(6,8):
     for j in range(4,6):
         grid[i][j] = "x"
 
+#Position values for Grid
+gridPos = [(0, 0) for i in range(10)]
+for i in range(len(grid)):
+    gridPos[i] = (i * height/12) + 15, ((i * height/12) + height/12 + 12)
+print(gridPos)
+
 
 spawnerRed = []
 for i in range(1,10):
@@ -63,7 +69,11 @@ def gameLogic(screen, mousePressed):
         pieceOut[0].draw(screen)
 
 
-    #for i in range(len(grid)):
+    for i in range(len(grid)):
+        for f in range(len(grid)):
+            if grid[i][f] != 0 and grid[i][f] != "x":
+                Piece(gridPos[i][0], gridPos[f][1], 60, grid[i][f], False).draw(screen)
+                
         
 
 
