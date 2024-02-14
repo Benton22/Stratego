@@ -1,7 +1,7 @@
 import pygame
 import sys
-from .Variables.Globals import globalheight, globalwidth, globalsize, globalbackground
-from .Buttons import PieceSpawner
+from Screens.Logic.Variables.Globals import globalheight, globalwidth, globalsize, globalbackground
+from Screens.Logic.Buttons import PieceSpawner, ButtonBacker
 
 height = globalheight
 width = globalwidth
@@ -30,16 +30,34 @@ class Piece():
 
 spawnerRed = []
 for i in range(1,10):
-    spawnerRed.append(PieceSpawner((i*2) * width/24 - width/22, height - 2 * height/48, 30, str(i), i, False))
-spawnerRed.append(PieceSpawner((10*2) * width/24 - width/22, height - 2 * height/48, 30, "S", "S", False))
-spawnerRed.append(PieceSpawner((11*2) * width/24 - width/22, height - 2 * height/48, 30, "Stratego\Images\Bomb.png", "B", True))
-spawnerRed.append(PieceSpawner((12*2) * width/24 - width/22, height - 2 * height/48, 30, "Stratego\Images\Flag.png", "F", True))
+    spawnerRed.append(PieceSpawner((i*2) * width/24 - width/22, height - 3 * height/48, 30, str(i), i, False))
+spawnerRed.append(PieceSpawner((10*2) * width/24 - width/22, height - 3 * height/48, 30, "S", "S", False))
+spawnerRed.append(PieceSpawner((11*2) * width/24 - width/22, height - 3 * height/48, 30, "Images\\Bomb.png", "B", True))
+spawnerRed.append(PieceSpawner((12*2) * width/24 - width/22, height - 3 * height/48, 30, "Images\\Flag.png", "F", True))
+
+spawns = [1, 1, 2, 3, 4, 4, 4, 5, 8, 6, 1, 1]
+buttonBackers = []
+for i in range(1, 13):
+    buttonBackers.append(ButtonBacker((i*2) * width/24 - width/22 - 3, height - 3* height/48 - 3, 36, 60, str(spawns[i-1])))
+
 
 print(grid)
 
-def gameLogic(screen):
+def gameLogic(screen, mousePressed):
+    for numBackers in range(len(buttonBackers)):
+        buttonBackers[numBackers].draw(screen)
+
     for numSpawner in range(len(spawnerRed)):
         spawnerRed[numSpawner].draw(screen)
+
+    if mousePressed:
+        for button in range(len(buttonBackers)):
+            if spawnerRed[button].over_button() and spawns[button] > 0:
+                spawns[button] -= 1
+                buttonBackers[button].number = spawns[button]
+                print (spawns[button])
+
+
 
     xIndex, yIndex = gridIndexer()
 

@@ -42,10 +42,15 @@ def BoardScreen(screen, CurrentScreenIndex):
     running = True
 
     while running:
+        mousePressed = False
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mousePressed = True
 
 
         # Drawing
@@ -67,8 +72,11 @@ def BoardScreen(screen, CurrentScreenIndex):
 
         for gridLine in range(len(gridLineFiller)):
             pygame.draw.rect(screen, white, gridLineFiller[gridLine].innerLine)
-        
-        gameLogic(screen)
+
+
+        gameLogic(screen, mousePressed)
+
+
 
         # Update display
         pygame.display.flip()

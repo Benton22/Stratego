@@ -63,4 +63,21 @@ class PieceSpawner:
         mouseX, mouseY = pygame.mouse.get_pos()
         self.hovering = self.innerButton.collidepoint(mouseX, mouseY)
         return self.hovering
-        
+
+
+class ButtonBacker():
+    def __init__(self, locationX, locationY, sizeX, sizeY, number):
+        self.hovering = False
+        self.sizeX = sizeX
+        self.sizeY = sizeY
+        self.locationX = locationX
+        self.locationY = locationY
+        self.text = number
+        self.backer = pygame.Rect(self.locationX, self.locationY, self.sizeX, self.sizeY)
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, bgray1, self.backer)
+        font = pygame.font.Font(pygame.font.get_default_font(), 16)
+        text_surface = font.render(self.text, True, (255,255,255))
+        text_rect = text_surface.get_rect(center=(self.locationX + self.sizeX / 2, self.locationY + 17 + self.sizeY / 2))
+        screen.blit(text_surface, text_rect)
