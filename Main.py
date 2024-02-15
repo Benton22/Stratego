@@ -1,5 +1,6 @@
 import pygame
 import sys
+import random
 pygame.init()
 
 from Screens.Logic.Variables.Globals import globalheight, globalwidth, globalsize, globalbackground, globalwider

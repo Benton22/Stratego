@@ -1,7 +1,8 @@
 import pygame
 import sys
+import random
 from Screens.Logic.Variables.Globals import globalheight, globalwidth, globalsize, globalbackground, globalwider
-from Screens.Logic.Buttons import PieceSpawner, ButtonBacker, BasicButton
+from Screens.Logic.Buttons import PieceSpawner, ButtonBacker, BasicButton, TrashButton
 from Pieces.Pieces import Piece
 
 height = globalheight
@@ -47,12 +48,17 @@ spawnerRed.append(PieceSpawner((11*2) * width/24 - width/22, height - 3 * height
 spawnerRed.append(PieceSpawner((12*2) * width/24 - width/22, height - 3 * height/48, 30, "Stratego\\Pieces\\Flag.png", "F", True))
 
 spawns = [1, 1, 2, 3, 4, 4, 4, 5, 8, 6, 1, 1]
+spawnReset = [1, 1, 2, 3, 4, 4, 4, 5, 8, 6, 1, 1]
+
 buttonBackers = []
 for i in range(0, 13):
     buttonBackers.append("")
 
 finishButton = BasicButton(width + (globalwider - width)/10, height/12, 8 * (globalwider - width)/10, height/12, "Finish", 34)
 endTurnButton = BasicButton(width + (globalwider - width)/10, height/12, 8 * (globalwider - width)/10, height/12, "End Turn", 30)
+resetButton = BasicButton(width + (globalwider - width)/10, 2 * height/12 + height/48, 8 * (globalwider - width)/10, height/12, "Reset", 34)
+trashButton = TrashButton(width + (globalwider - width)/10, 11 * height/12 - height/48, 8 * (globalwider - width)/10, height/12, "Trash", 34, (80,80,80), (62, 62, 62))
+randomButton = BasicButton(width + (globalwider - width)/10, 3 * height/12 + 2 * height/48, 8 * (globalwider - width)/10, height/12, "Random", 34)
 
 
 
@@ -63,34 +69,54 @@ def gameLogic(screen, mousePressed, gameState):
     global pieceChosenL
     gameStateLocal = gameState
     xIndex, yIndex = gridIndexer()
+    keys = pygame.key.get_pressed()
 
     #Mouse Pressed Logic--------------------------------------------------------------Mouse Pressed Logic
    
     if mousePressed:
         if gameStateLocal == "Setup":
             if pieceSelected == False:
-                for button in range(len(buttonBackers)-1):
-                    if spawnerRed[button].over_button() and spawns[button] > 0:
-                        spawns[button] -= 1
-                        buttonBackers[button].number = spawns[button]
-                        pieceSelected = True
-                        pieceChosenL = button
                 if xIndex < 12 and yIndex < 12 and yIndex > 6 and grid [xIndex -1 ][yIndex -1] != 0 and grid[xIndex -1][yIndex -1] != "x":
-                    pieceSelected = True
                     pieceChosenL = grid[xIndex-1][yIndex-1]
+                    grid[xIndex-1][yIndex-1] = 0
                     if pieceChosenL != "B" and pieceChosenL != "F" and pieceChosenL != "S":
                         pieceChosenL -= 1
-                    grid[xIndex-1][yIndex-1] = 0
-                    print (pieceChosenL, pieceChosen)
+                    if keys[pygame.K_LSHIFT] != True:
+                        pieceSelected = True
+                    else:
+                        spawns[pieceChosen] += 1
+                else:
+                    for button in range(len(buttonBackers)-1):
+                        if spawnerRed[button].over_button() and spawns[button] > 0:
+                            spawns[button] -= 1
+                            buttonBackers[button].number = spawns[button]
+                            pieceSelected = True
+                            pieceChosenL = button
             else:
-                if xIndex < 12 and yIndex < 12 and yIndex > 6 and grid [xIndex -1 ][yIndex -1] == 0:
-                    grid[xIndex -1][yIndex -1] = pieceOut[0].type
+                if trashButton.over_button():
                     pieceSelected = False
-        if finishButton.over_button():
-            if all(value == 0 for value in spawns):
-                gameStateLocal = "Playing"
-   
+                    spawns[pieceChosen] += 1
+                elif xIndex < 12 and yIndex < 12 and yIndex > 6 and grid [xIndex -1 ][yIndex -1] == 0:
+                    grid[xIndex -1][yIndex -1] = pieceOut[0].type
+                    if keys[pygame.K_LCTRL] == True and spawns[pieceChosenL] > 0:
+                        spawns[pieceChosenL] -= 1
+                    else:
+                        pieceSelected = False
+            if finishButton.over_button():
+                if all(value == 0 for value in spawns):
+                    gameStateLocal = "Playing"
+            elif resetButton.over_button():
+                pieceSelected = False
+                for i in range(10):
+                    for j in range(6,10):
+                        grid[i][j] = 0
+                for i in range(len(spawns)):
+                    spawns[i] = spawnReset[i]
+            elif randomButton.over_button():
+                randomPlacements()
+                print(grid)
 
+            
 
     if pieceChosenL == "B":
         pieceChosen = 9
@@ -101,17 +127,13 @@ def gameLogic(screen, mousePressed, gameState):
     else:
         pieceChosen = pieceChosenL
 
-
-
     #UI -----------------------------------------------------------------------------------------------UI
-
 
     for i in range(len(grid)):
         for f in range(len(grid)):
             if grid[i][f] != 0 and grid[i][f] != "x":
                 Piece(gridPos[i][0], gridPos[f][1], 60, grid[i][f], False).draw(screen)
-
-                
+    
     for i in range(len(buttonBackers)):
         buttonBackers[i] = (ButtonBacker((i*2) * width/24 - width/22 - 3, height - 3* height/48 - 3, 36, 60, str(spawns[i-1])))
 
@@ -121,24 +143,37 @@ def gameLogic(screen, mousePressed, gameState):
     for numSpawner in range(len(spawnerRed)):
         spawnerRed[numSpawner].draw(screen)
 
+    if gameStateLocal == "Setup":
+        finishButton.draw(screen)
+        resetButton.draw(screen)
+        trashButton.draw(screen)
+        randomButton.draw(screen)
+    else:
+        endTurnButton.draw(screen)
+
+
+
+    #Piece Drawing
     if pieceSelected:
         pieceOut[0] = Piece(spawnerRed[pieceChosen].locationX, spawnerRed[pieceChosen].locationY, 60, spawnerRed[pieceChosen].type, True)
         pieceOut[0].draw(screen)
-
-
-
-
-    if gameStateLocal == "Setup":
-        finishButton.draw(screen)
-    else:
-        endTurnButton.draw(screen)
-                
+    
         
     return gameStateLocal
 
 
 
-
+def randomPlacements():
+    for i in range (0,10):
+        for j in range (6,10):
+            if grid[i][j] == 0:
+                sVals = 15
+                if sVals < 14:
+                    while spawns[sVals] == 0:
+                        sVals = random.choice(spawns)
+                    grid[i][j] = spawns[sVals]
+    print(grid)
+    return grid
 #Pulling mouse location in Grid-form
 def gridIndexer():
     xIndex = 0
