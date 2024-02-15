@@ -2,8 +2,8 @@ import pygame
 import sys
 from Screens.Logic.Variables.Globals import globalheight, globalwidth, globalsize, globalbackground
 
-flagPath = "Stratego\\Pieces\\Flag.png"
-bombPath = "Stratego\\Pieces\\Bomb.png"
+flagPath = "Pieces\\Flag.png"
+bombPath = "Pieces\\Bomb.png"
 
 bgray1 = (62, 62, 62)
 bgray2 = (100, 100, 100)

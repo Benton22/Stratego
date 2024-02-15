@@ -8,13 +8,15 @@ width = globalwidth
 size = globalsize
 black = 0, 0, 0
 background = globalbackground
+lighterBackground = (56, 56, 56)
 white = 255, 255, 255
 gridSize = 11
 gridLinesH = []
 gridLinesV = []
 gridLineFiller = []
+gameState = "Setup"
 
-
+#Draw the Grid -----------------------------------------------------------Draw the Grid
 class GridLines():
     def __init__(self, locationX, locationY, sizeX, sizeY):
         self.sizeX = sizeX
@@ -38,9 +40,15 @@ gridLineFiller.append(GridLines((7 * height/12), height/12, 6, 4* height/12))
 gridLineFiller.append(GridLines((3 * height/12), 6 * height/12 + height/12, 6, 4* height/12))
 gridLineFiller.append(GridLines((7 * height/12), 6 * height/12 + height/12, 6, 4* height/12))
 
+#Draw the Grid -----------------------------------------------------------Draw the Grid
+
+
+cannotPlace = pygame.Rect(0, 7 * height/12, width, 4 * height/12)
+
+
 def BoardScreen(screen, CurrentScreenIndex):
     running = True
-
+    global gameState
     while running:
         mousePressed = False
 
@@ -55,6 +63,9 @@ def BoardScreen(screen, CurrentScreenIndex):
 
         # Drawing
         screen.fill(background)
+
+        pygame.draw.rect(screen, lighterBackground, cannotPlace)
+
         for gridLine in range(len(gridLinesH)):
             if gridLine != 5:
                 pygame.draw.rect(screen, black, gridLinesH[gridLine].outerLine)
@@ -73,8 +84,7 @@ def BoardScreen(screen, CurrentScreenIndex):
         for gridLine in range(len(gridLineFiller)):
             pygame.draw.rect(screen, white, gridLineFiller[gridLine].innerLine)
 
-
-        gameLogic(screen, mousePressed)
+        gameState = gameLogic(screen, mousePressed, gameState)
 
 
 

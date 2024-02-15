@@ -9,11 +9,11 @@ height = globalheight
 width = globalwider
 size = width, height
 black = 0, 0, 0
-background = 43,43,43
+background = globalbackground
 white = 255, 255, 255
 
 
-StartButton = BasicButton(width/2 - 70, height/2, 140, 80, "Start")
+StartButton = BasicButton(width/2 - 70, height/2, 140, 80, "Start", 36)
 
 
 

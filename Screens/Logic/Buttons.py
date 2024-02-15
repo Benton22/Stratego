@@ -5,7 +5,7 @@ bgray2 = (100, 100, 100)
 bgray3 = (80, 80, 80)
 
 class BasicButton:
-    def __init__(self, locationX, locationY, sizeX, sizeY, text):
+    def __init__(self, locationX, locationY, sizeX, sizeY, text, textSize):
         self.hovering = False
         self.sizeX = sizeX
         self.sizeY = sizeY
@@ -13,6 +13,7 @@ class BasicButton:
         self.locationY = locationY
         self.text = text
         self.Bezel = sizeX/20
+        self.textSize = textSize
         self.outerButton = pygame.Rect(self.locationX, self.locationY, self.sizeX, self.sizeY)
         self.innerButton = pygame.Rect(self.locationX + self.Bezel, self.locationY + self.Bezel, sizeX - 2 * self.Bezel, sizeY - 2 * self.Bezel)
 
@@ -21,7 +22,7 @@ class BasicButton:
         self.over_button()
         if self.hovering == True:
             pygame.draw.rect(screen, bgray2, self.innerButton)
-        font = pygame.font.Font(pygame.font.get_default_font(), 36)
+        font = pygame.font.Font(pygame.font.get_default_font(), self.textSize)
         text_surface = font.render(self.text, True, (255,255,255))
         text_rect = text_surface.get_rect(center=(self.locationX + self.sizeX / 2, self.locationY + self.sizeY / 2))
         screen.blit(text_surface, text_rect)
