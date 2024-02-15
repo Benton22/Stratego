@@ -65,6 +65,7 @@ def gameLogic(screen, mousePressed, gameState):
     xIndex, yIndex = gridIndexer()
 
     #Mouse Pressed Logic--------------------------------------------------------------Mouse Pressed Logic
+   
     if mousePressed:
         if gameStateLocal == "Setup":
             if pieceSelected == False:
@@ -88,8 +89,7 @@ def gameLogic(screen, mousePressed, gameState):
         if finishButton.over_button():
             if all(value == 0 for value in spawns):
                 gameStateLocal = "Playing"
-    
-
+   
 
 
     if pieceChosenL == "B":
@@ -134,8 +134,6 @@ def gameLogic(screen, mousePressed, gameState):
         endTurnButton.draw(screen)
                 
         
-
-
     return gameStateLocal
 
 

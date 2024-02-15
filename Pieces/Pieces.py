@@ -2,8 +2,8 @@ import pygame
 import sys
 from Screens.Logic.Variables.Globals import globalheight, globalwidth, globalsize, globalbackground
 
-flagPath = "Stratego\\Pieces\\Flag.png"
-bombPath = "Stratego\\Pieces\\Bomb.png"
+flag_image = pygame.image.load("Stratego\\Pieces\\Flag.png")
+bomb_image = pygame.image.load("Stratego\\Pieces\\Bomb.png")
 
 bgray1 = (62, 62, 62)
 bgray2 = (100, 100, 100)
@@ -19,16 +19,25 @@ class Piece ():
         self.Bezel = 6
         self.outerSquare = pygame.Rect(self.locationX, self.locationY, self.size, self.size)
         self.innerSquare = pygame.Rect(self.locationX + self.Bezel, self.locationY + self.Bezel, self.size - 2 * self.Bezel, self.size - 2 * self.Bezel)
-        self.moving = moving
         
+        self.moving = moving
+
+        
+
+        #Creation of bomb and text surfaces----------------------------Creation of bomb and text surfaces
         if self.type != "F" and self.type != "B":
             self.text = str(self.type)
             self.png = False
         elif self.type == "F":
-            self.text = flagPath
+            self.image = flag_image
         else:
-            self.text = bombPath
-
+            self.image = bomb_image
+        if self.png == False:
+            font = pygame.font.Font(pygame.font.get_default_font(), 22)
+            self.text_surface = font.render(self.text, True, (255,255,255))
+        else:
+            self.image = pygame.transform.scale(self.image, (int(self.size-2 * self.Bezel), int(self.size - 2 * self.Bezel)))
+        
 
     def draw(self, screen):
 
@@ -43,15 +52,10 @@ class Piece ():
 
         if self.hovering == True:
             pygame.draw.rect(screen, bgray2, self.innerSquare)
-        font = pygame.font.Font(pygame.font.get_default_font(), 22)
-        
         if self.png == False:
-            text_surface = font.render(self.text, True, (255,255,255))
-            text_rect = text_surface.get_rect(center=(self.locationX + self.size / 2, self.locationY + self.size / 2))
-            screen.blit(text_surface, text_rect)
+            self.text_rect = self.text_surface.get_rect(center=(self.locationX + self.size / 2, self.locationY + self.size / 2))
+            screen.blit(self.text_surface, self.text_rect)
         else:
-            self.image = pygame.image.load(self.text)
-            self.image = pygame.transform.scale(self.image, (int(self.size-2 * self.Bezel), int(self.size - 2 * self.Bezel)))
             screen.blit(self.image, (self.locationX + self.Bezel, self.locationY + self.Bezel))
         
         
