@@ -64,7 +64,8 @@ def BoardScreen(screen, CurrentScreenIndex):
         # Drawing
         screen.fill(background)
 
-        pygame.draw.rect(screen, lighterBackground, cannotPlace)
+        if gameState == "Setup":
+            pygame.draw.rect(screen, lighterBackground, cannotPlace)
 
         for gridLine in range(len(gridLinesH)):
             if gridLine != 5:

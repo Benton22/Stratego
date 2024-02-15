@@ -13,6 +13,9 @@ white = 255, 255, 255
 
 pieceSelected = False
 pieceChosen = 0
+pieceChosenL = 0
+pieceOut = [""]
+
 
 
 #Grids-------------------------------------------------------------------------Grids
@@ -39,11 +42,11 @@ print(grid)
 spawnerRed = []
 for i in range(1,10):
     spawnerRed.append(PieceSpawner((i*2) * width/24 - width/22, height - 3 * height/48, 30, str(i), i, False))
-spawnerRed.append(PieceSpawner((10*2) * width/24 - width/22, height - 3 * height/48, 30, "S", "S", False))
-spawnerRed.append(PieceSpawner((11*2) * width/24 - width/22, height - 3 * height/48, 30, "Pieces\\Bomb.png", "B", True))
-spawnerRed.append(PieceSpawner((12*2) * width/24 - width/22, height - 3 * height/48, 30, "Pieces\\Flag.png", "F", True))
+spawnerRed.append(PieceSpawner((10*2) * width/24 - width/22, height - 3 * height/48, 30, "Stratego\\Pieces\\Bomb.png", "B", True))
+spawnerRed.append(PieceSpawner((11*2) * width/24 - width/22, height - 3 * height/48, 30, "S", "S", False))
+spawnerRed.append(PieceSpawner((12*2) * width/24 - width/22, height - 3 * height/48, 30, "Stratego\\Pieces\\Flag.png", "F", True))
 
-spawns = [1, 1, 2, 3, 4, 4, 4, 5, 8, 1, 6, 1]
+spawns = [1, 1, 2, 3, 4, 4, 4, 5, 8, 6, 1, 1]
 buttonBackers = []
 for i in range(0, 13):
     buttonBackers.append("")
@@ -52,18 +55,63 @@ finishButton = BasicButton(width + (globalwider - width)/10, height/12, 8 * (glo
 endTurnButton = BasicButton(width + (globalwider - width)/10, height/12, 8 * (globalwider - width)/10, height/12, "End Turn", 30)
 
 
-pieceOut = [""]
 
 
 def gameLogic(screen, mousePressed, gameState):
     global pieceSelected
     global pieceChosen
+    global pieceChosenL
     gameStateLocal = gameState
-
     xIndex, yIndex = gridIndexer()
+
+    #Mouse Pressed Logic--------------------------------------------------------------Mouse Pressed Logic
+    if mousePressed:
+        if gameStateLocal == "Setup":
+            if pieceSelected == False:
+                for button in range(len(buttonBackers)-1):
+                    if spawnerRed[button].over_button() and spawns[button] > 0:
+                        spawns[button] -= 1
+                        buttonBackers[button].number = spawns[button]
+                        pieceSelected = True
+                        pieceChosenL = button
+                if xIndex < 12 and yIndex < 12 and yIndex > 6 and grid [xIndex -1 ][yIndex -1] != 0 and grid[xIndex -1][yIndex -1] != "x":
+                    pieceSelected = True
+                    pieceChosenL = grid[xIndex-1][yIndex-1]
+                    if pieceChosenL != "B" and pieceChosenL != "F" and pieceChosenL != "S":
+                        pieceChosenL -= 1
+                    grid[xIndex-1][yIndex-1] = 0
+                    print (pieceChosenL, pieceChosen)
+            else:
+                if xIndex < 12 and yIndex < 12 and yIndex > 6 and grid [xIndex -1 ][yIndex -1] == 0:
+                    grid[xIndex -1][yIndex -1] = pieceOut[0].type
+                    pieceSelected = False
+        if finishButton.over_button():
+            if all(value == 0 for value in spawns):
+                gameStateLocal = "Playing"
+    
+
+
+
+    if pieceChosenL == "B":
+        pieceChosen = 9
+    elif pieceChosenL == "S":
+        pieceChosen = 10
+    elif pieceChosenL == "F":
+        pieceChosen = 11
+    else:
+        pieceChosen = pieceChosenL
+
+
 
     #UI -----------------------------------------------------------------------------------------------UI
 
+
+    for i in range(len(grid)):
+        for f in range(len(grid)):
+            if grid[i][f] != 0 and grid[i][f] != "x":
+                Piece(gridPos[i][0], gridPos[f][1], 60, grid[i][f], False).draw(screen)
+
+                
     for i in range(len(buttonBackers)):
         buttonBackers[i] = (ButtonBacker((i*2) * width/24 - width/22 - 3, height - 3* height/48 - 3, 36, 60, str(spawns[i-1])))
 
@@ -78,10 +126,7 @@ def gameLogic(screen, mousePressed, gameState):
         pieceOut[0].draw(screen)
 
 
-    for i in range(len(grid)):
-        for f in range(len(grid)):
-            if grid[i][f] != 0 and grid[i][f] != "x":
-                Piece(gridPos[i][0], gridPos[f][1], 60, grid[i][f], False).draw(screen)
+
 
     if gameStateLocal == "Setup":
         finishButton.draw(screen)
@@ -90,23 +135,7 @@ def gameLogic(screen, mousePressed, gameState):
                 
         
 
-    #Mouse Pressed Logic--------------------------------------------------------------Mouse Pressed Logic
-    if mousePressed:
-        if gameStateLocal == "Setup":
-            if pieceSelected == False:
-                for button in range(len(buttonBackers)-1):
-                    if spawnerRed[button].over_button() and spawns[button] > 0:
-                        spawns[button] -= 1
-                        buttonBackers[button].number = spawns[button]
-                        pieceSelected = True
-                        pieceChosen = button
-            else:
-                if xIndex < 12 and yIndex < 12 and yIndex > 6 and grid [xIndex -1 ][yIndex -1] == 0:
-                    grid[xIndex -1][yIndex -1] = pieceOut[0].type
-                    pieceSelected = False
-        if finishButton.over_button():
-            gameStateLocal = "Playing"
-    
+
     return gameStateLocal
 
 
