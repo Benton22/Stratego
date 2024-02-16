@@ -56,7 +56,7 @@ for i in range(0, 13):
 
 finishButton = BasicButton(width + (globalwider - width)/10, height/12, 8 * (globalwider - width)/10, height/12, "Finish", 34)
 endTurnButton = BasicButton(width + (globalwider - width)/10, height/12, 8 * (globalwider - width)/10, height/12, "End Turn", 30)
-resetButton = BasicButton(width + (globalwider - width)/10, 2 * height/12 + height/48, 8 * (globalwider - width)/10, height/12, "Reset", 34)
+resetButton = BasicButton(width + (globalwider - width)/10, 2 * height/12 + height/48, 8 * (globalwider - width)/10, height/12, "Clear", 34)
 trashButton = TrashButton(width + (globalwider - width)/10, 11 * height/12 - height/48, 8 * (globalwider - width)/10, height/12, "Trash", 34, (80,80,80), (62, 62, 62))
 randomButton = BasicButton(width + (globalwider - width)/10, 3 * height/12 + 2 * height/48, 8 * (globalwider - width)/10, height/12, "Random", 34)
 
@@ -84,6 +84,7 @@ def gameLogic(screen, mousePressed, gameState):
                     if keys[pygame.K_LSHIFT] != True:
                         pieceSelected = True
                     else:
+                        chosenUpdate()
                         spawns[pieceChosen] += 1
                 else:
                     for button in range(len(buttonBackers)-1):
@@ -114,18 +115,10 @@ def gameLogic(screen, mousePressed, gameState):
                     spawns[i] = spawnReset[i]
             elif randomButton.over_button():
                 randomPlacements()
-                print(grid)
 
             
 
-    if pieceChosenL == "B":
-        pieceChosen = 9
-    elif pieceChosenL == "S":
-        pieceChosen = 10
-    elif pieceChosenL == "F":
-        pieceChosen = 11
-    else:
-        pieceChosen = pieceChosenL
+    chosenUpdate()
 
     #UI -----------------------------------------------------------------------------------------------UI
 
@@ -163,17 +156,48 @@ def gameLogic(screen, mousePressed, gameState):
 
 
 
+def chosenUpdate():
+    global pieceChosen
+    global pieceChosenL
+    if pieceChosenL == "B":
+        pieceChosen = 9
+    elif pieceChosenL == "S":
+        pieceChosen = 10
+    elif pieceChosenL == "F":
+        pieceChosen = 11
+    else:
+        pieceChosen = pieceChosenL
+
+def chosenLUpdate():
+    global pieceChosen
+    global pieceChosenL
+    if pieceChosen == 10:
+        pieceChosenL = "B"
+    elif pieceChosen == 11:
+        pieceChosenL = "S"
+    elif pieceChosen == 12:
+        pieceChosenL = "F"
+    else:
+        pieceChosenL = pieceChosen
+
+        
+
 def randomPlacements():
+    global pieceChosen
+    global pieceChosenL
     for i in range (0,10):
         for j in range (6,10):
             if grid[i][j] == 0:
-                sVals = 15
-                if sVals < 14:
-                    while spawns[sVals] == 0:
-                        sVals = random.choice(spawns)
-                    grid[i][j] = spawns[sVals]
-    print(grid)
+                sVals = []
+                sVals.append(random.randint(0, 11))
+                while spawns[sVals[0]] == 0:
+                    sVals[0] = random.randint(0, 11)
+                pieceChosen = sVals [0] + 1
+                chosenLUpdate()
+                grid[i][j] = pieceChosenL
+                spawns[sVals[0]] -=1
     return grid
+
 #Pulling mouse location in Grid-form
 def gridIndexer():
     xIndex = 0
