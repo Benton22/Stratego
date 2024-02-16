@@ -4,7 +4,7 @@ from Screens.Logic.Variables.Globals import globalheight, globalwidth, globalsiz
 
 flag_image = pygame.image.load("Stratego\\Pieces\\Flag.png")
 bomb_image = pygame.image.load("Stratego\\Pieces\\Bomb.png")
-
+fullOutline_image = pygame.image.load("Stratego\\Pieces\\FullOutline.png")
 bgray1 = (62, 62, 62)
 bgray2 = (100, 100, 100)
 bgray3 = (80, 80, 80)
@@ -19,7 +19,6 @@ class Piece ():
         self.Bezel = 6
         self.outerSquare = pygame.Rect(self.locationX, self.locationY, self.size, self.size)
         self.innerSquare = pygame.Rect(self.locationX + self.Bezel, self.locationY + self.Bezel, self.size - 2 * self.Bezel, self.size - 2 * self.Bezel)
-        
         self.moving = moving
 
         
@@ -58,10 +57,22 @@ class Piece ():
         else:
             screen.blit(self.image, (self.locationX + self.Bezel, self.locationY + self.Bezel))
         
-        
 
     
     def over_Piece(self):
         mouseX, mouseY = pygame.mouse.get_pos()
         self.hovering = self.innerSquare.collidepoint(mouseX, mouseY)
         return self.hovering
+    
+def moveLogic(type, xIndex, yIndex, potentialMoves, grid):
+    potentialMoves[xIndex][yIndex] = 1
+    if grid[xIndex -1][yIndex] < 1:
+        potentialMoves[xIndex -1][yIndex] = 1
+    if grid[xIndex +1][yIndex] < 1:
+        potentialMoves[xIndex +1][yIndex] = 1
+    if grid[xIndex][yIndex-1] < 1:
+        potentialMoves[xIndex][yIndex -1] = 1
+    if grid[xIndex][yIndex+1] < 1:
+        potentialMoves[xIndex][yIndex +1] = 1
+    return potentialMoves
+
