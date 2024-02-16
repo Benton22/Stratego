@@ -11,12 +11,12 @@ size = globalsize
 black = 0, 0, 0
 background = globalbackground
 white = 255, 255, 255
-
 pieceSelected = False
 pieceChosen = 0
 pieceChosenL = 0
 pieceOut = [""]
-
+player2Setup = False
+player2 = [0]
 
 
 #Grids-------------------------------------------------------------------------Grids
@@ -67,6 +67,7 @@ def gameLogic(screen, mousePressed, gameState):
     global pieceSelected
     global pieceChosen
     global pieceChosenL
+    global player2Setup
     gameStateLocal = gameState
     xIndex, yIndex = gridIndexer()
     keys = pygame.key.get_pressed()
@@ -74,6 +75,7 @@ def gameLogic(screen, mousePressed, gameState):
     #Mouse Pressed Logic--------------------------------------------------------------Mouse Pressed Logic
    
     if mousePressed:
+        chosenUpdate()
         if gameStateLocal == "Setup":
             if pieceSelected == False:
                 if xIndex < 12 and yIndex < 12 and yIndex > 6 and grid [xIndex -1 ][yIndex -1] != 0 and grid[xIndex -1][yIndex -1] != "x":
@@ -105,7 +107,13 @@ def gameLogic(screen, mousePressed, gameState):
                         pieceSelected = False
             if finishButton.over_button():
                 if all(value == 0 for value in spawns):
-                    gameStateLocal = "Playing"
+                    if player2Setup == True:
+                        gameStateLocal = "Playing"
+                    else:
+                        player2Setup = True
+                        for i in range(len(spawns)):
+                            spawns[i] = spawnReset[i]
+                    changePlayer()
             elif resetButton.over_button():
                 pieceSelected = False
                 for i in range(10):
@@ -115,10 +123,20 @@ def gameLogic(screen, mousePressed, gameState):
                     spawns[i] = spawnReset[i]
             elif randomButton.over_button():
                 randomPlacements()
+        else:
+            if pieceSelected == False:
+                if xIndex < 12 and yIndex < 12 and yIndex > 6 and grid [xIndex -1 ][yIndex -1] > 0 and grid[xIndex -1][yIndex -1] != "x":
+                    pieceChosenL = grid[xIndex-1][yIndex-1]
+                    grid[xIndex-1][yIndex-1] = 0
+                    if pieceChosenL != "B" and pieceChosenL != "F" and pieceChosenL != "S":
+                        pieceChosenL -= 1
+                    if keys[pygame.K_LSHIFT] != True:
+                        pieceSelected = True
+                    else:
+                        chosenUpdate()
 
             
 
-    chosenUpdate()
 
     #UI -----------------------------------------------------------------------------------------------UI
 
@@ -154,7 +172,33 @@ def gameLogic(screen, mousePressed, gameState):
         
     return gameStateLocal
 
-
+def changePlayer():
+    tempGrid = [[0 for i in range(10)] for j in range(10)]
+    for i in range(0, 10):
+        for j in range(0,10):
+            flipped_i = 9 - i
+            flipped_j = 9 - j
+            tempGrid[flipped_i][flipped_j] = grid[i][j]
+            if tempGrid[flipped_i][flipped_j] == "B":
+                tempGrid[flipped_i][flipped_j] = 10
+            elif tempGrid[flipped_i][flipped_j] == "S":
+                tempGrid[flipped_i][flipped_j] = 11
+            elif tempGrid[flipped_i][flipped_j] == "F":
+                tempGrid[flipped_i][flipped_j] = 12
+    for i in range(0,10):
+        for j in range(0,10):
+            if tempGrid[i][j] != "x":
+                grid[i][j] = -1 * tempGrid[i][j]
+                if grid[i][j] == 10:
+                    grid[i][j] = "B"
+                elif grid[i][j] == 11:
+                    grid[i][j] = "S"
+                elif grid[i][j] == 12:
+                    grid[i][j] = "F"
+    if player2[0] == 0:
+        player2[0] = 1
+    else:
+        player2[0] = 0
 
 def chosenUpdate():
     global pieceChosen
@@ -179,8 +223,6 @@ def chosenLUpdate():
         pieceChosenL = "F"
     else:
         pieceChosenL = pieceChosen
-
-        
 
 def randomPlacements():
     global pieceChosen
