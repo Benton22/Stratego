@@ -32,9 +32,9 @@ for i in range(0, gridSize):
     gridLinesH.append (GridLines(0, (i * height/12) + height/12-3, width+6, 6))
     gridLinesV.append (GridLines((i * height/12), height/12, 6, width))
 #filling in the gaps
-gridLineFiller.append(GridLines(0, height/2, 2 * width/10 + 3, 6))
-gridLineFiller.append(GridLines(4 * width/10 + 3, height/2, 2 * width/10, 6))
-gridLineFiller.append(GridLines(8 * width/10 + 3, height/2, 2 * width/10, 6))
+gridLineFiller.append(GridLines(0, height/2 - 3, 2 * width/10 + 3, 6))
+gridLineFiller.append(GridLines(4 * width/10 + 3, height/2 - 3, 2 * width/10, 6))
+gridLineFiller.append(GridLines(8 * width/10 + 3, height/2 - 3, 2 * width/10, 6))
 gridLineFiller.append(GridLines((3 * height/12), height/12, 6, 4* height/12))
 gridLineFiller.append(GridLines((7 * height/12), height/12, 6, 4* height/12))
 gridLineFiller.append(GridLines((3 * height/12), 6 * height/12 + height/12, 6, 4* height/12))
