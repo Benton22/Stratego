@@ -51,7 +51,7 @@ class Piece ():
         elif self.type == 11:
             self.text = "S"
             self.png = False
-        else:
+        elif self.type == 10:
             self.image = bomb_image
         if self.png == False:
             font = pygame.font.Font(pygame.font.get_default_font(), 22)
@@ -90,8 +90,6 @@ def moveLogic(type, xIndex, yIndex, potentialMoves, grid):
     checker = 0
     potentialMoves[xIndex][yIndex][0] = 1
     
-    print(potentialMoves[xIndex][yIndex])
-    print(potentialMoves[xIndex][yIndex-1])
     if xIndex > 0 and grid[xIndex -1][yIndex] < 1:
         potentialMoves[xIndex - 1][yIndex][0] = 1
         if grid[xIndex][yIndex] != 9:
@@ -101,7 +99,6 @@ def moveLogic(type, xIndex, yIndex, potentialMoves, grid):
         else:
             checker = xIndex
             while checker >= 1:
-                print (checker)
                 if xIndex > 0 and grid[checker - 1][yIndex] < 1:
                     potentialMoves[checker - 1][yIndex][0] = 1
                     potentialMoves[checker][yIndex][1] = "Horizontal"
@@ -121,7 +118,6 @@ def moveLogic(type, xIndex, yIndex, potentialMoves, grid):
         else:
             checker = xIndex
             while checker < 9:
-                print (checker)
                 if xIndex >= 0 and grid[checker + 1][yIndex] < 1:
                     potentialMoves[checker + 1][yIndex][0] = 1
                     potentialMoves[checker][yIndex][1] = "Horizontal"
@@ -141,7 +137,6 @@ def moveLogic(type, xIndex, yIndex, potentialMoves, grid):
         else:
             checker = yIndex
             while checker < 10:
-                print (checker)
                 if yIndex > 0 and grid[xIndex][checker - 1] < 1:
                     potentialMoves[xIndex][checker - 1][0] = 1
                     potentialMoves[xIndex][checker][1] = "Vertical"
@@ -162,7 +157,6 @@ def moveLogic(type, xIndex, yIndex, potentialMoves, grid):
         else:
             checker = yIndex
             while checker < 10:
-                print (checker)
                 if yIndex >= 0 and grid[xIndex][checker + 1] < 1:
                     potentialMoves[xIndex][checker + 1][0] = 1
                     potentialMoves[xIndex][checker][1] = "Vertical"
@@ -176,6 +170,33 @@ def moveLogic(type, xIndex, yIndex, potentialMoves, grid):
 
     potentialMoves[xIndex][yIndex][1] = "Center"
     return potentialMoves
+
+def combat(tempxIndex, tempyIndex, pieceChosen, xIndex, yIndex, grid):
+    attackingPiece = pieceChosen
+    defendingPiece = grid[xIndex][yIndex]
+    print(attackingPiece, defendingPiece)
+    #Attack from Below
+    if tempyIndex - yIndex >= 1:
+        grid[xIndex][yIndex] = 20
+        grid[tempxIndex][tempyIndex] = 0
+        print ("Attack from Below")
+    #Attack from Above
+    elif tempxIndex - xIndex >= 1:
+        grid[xIndex][yIndex] = 21
+        grid[tempxIndex][tempyIndex] = 0
+        print ("Attack from Right")
+    #Attack from Left
+    elif xIndex - tempxIndex >= 1:
+        grid[xIndex][yIndex] = 22
+        grid[tempxIndex][tempyIndex] = 0
+        print ("Attack from Left")
+    #Attack from Right
+    elif yIndex - tempyIndex >= 1:
+        grid[xIndex][yIndex] = 23
+        grid[tempxIndex][tempyIndex] = 0
+        print ("Attack from Above")
+    return grid, attackingPiece, defendingPiece
+
 
 def drawPotential(screen, potentialMoves):
     for i in range(0, 10):

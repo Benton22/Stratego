@@ -3,7 +3,7 @@ import sys
 import random
 from Screens.Logic.Variables.Globals import globalheight, globalwidth, globalsize, globalbackground, globalwider
 from Screens.Logic.Buttons import PieceSpawner, ButtonBacker, BasicButton, TrashButton
-from Pieces.Pieces import Piece, moveLogic, drawPotential
+from Pieces.Pieces import Piece, moveLogic, drawPotential, combat
 
 height = globalheight
 width = globalwidth
@@ -19,6 +19,7 @@ player2Setup = False
 player2 = [0]
 tempxIndex = 0
 tempyIndex = 0
+fightingPieces = []
 
 
 #Grids-------------------------------------------------------------------------Grids
@@ -58,7 +59,7 @@ for i in range(0, 12):
     buttonBackers.append("")
 
 finishButton = BasicButton(width + (globalwider - width)/10, height/12, 8 * (globalwider - width)/10, height/12, "Finish", 34)
-endTurnButton = BasicButton(width + (globalwider - width)/10, height/12, 8 * (globalwider - width)/10, height/12, "End Turn", 30)
+opponentTurnButton = BasicButton(width + (globalwider - width)/10, height/12, 8 * (globalwider - width)/10, height/12, "Done", 30)
 resetButton = BasicButton(width + (globalwider - width)/10, 2 * height/12 + height/48, 8 * (globalwider - width)/10, height/12, "Clear", 34)
 trashButton = TrashButton(width + (globalwider - width)/10, 11 * height/12 - height/48, 8 * (globalwider - width)/10, height/12, "Trash", 34, (80,80,80), (62, 62, 62))
 randomButton = BasicButton(width + (globalwider - width)/10, 3 * height/12 + 2 * height/48, 8 * (globalwider - width)/10, height/12, "Random", 34)
@@ -130,11 +131,13 @@ def gameLogic(screen, mousePressed, gameState):
                     spawns[i] = spawnReset[i]
             elif randomButton.over_button() and piecePickedUp == False:
                 randomPlacements()
-        #If gameState != Setup
+            elif opponentTurnButton.over_button() and piecePickedUp == False:
+                changePlayer()
+        #If gameState != Setup ---------------- moving chosen pieces in game
         else:
             global tempyIndex
             global tempxIndex
-            if pieceSelected == False:
+            if pieceSelected == False and xIndex < 11 and yIndex < 11:
                 pieceChosen = grid[xIndex-1][yIndex-1]
                 if pieceChosen != 13 and pieceChosen != 0 and pieceChosen != 10 and pieceChosen != 12:
                     tempxIndex = xIndex -1
@@ -146,8 +149,16 @@ def gameLogic(screen, mousePressed, gameState):
             else:
                 if xIndex < 11 and yIndex < 11 and potentialMoves[xIndex - 1][yIndex - 1][0] == 1:
                     pieceSelected = False
-                    grid[tempxIndex][tempyIndex] = 0
-                    grid[xIndex -1][yIndex - 1] = pieceChosen
+                    if potentialMoves[xIndex -1][yIndex -1][1] == "Enemy":
+                         fight = combat(tempxIndex, tempyIndex, pieceChosen, xIndex -1, yIndex - 1, grid)
+                         fightingPieces.append(fight[1])
+                         fightingPieces.append(fight[2])
+                         
+                    else:
+                        grid[tempxIndex][tempyIndex] = 0
+                        grid[xIndex -1][yIndex - 1] = pieceChosen
+                        
+                    
                     for i in range (0,10):
                         for j in range (0,10):
                             potentialMoves[i][j][0] = 0
@@ -159,9 +170,10 @@ def gameLogic(screen, mousePressed, gameState):
 
     for i in range(len(grid)):
         for f in range(len(grid)):
-            if grid[i][f] != 0 and grid[i][f] != 13:
+            if grid[i][f] != 0 and grid[i][f] < 13:
                 Piece(gridPos[i][0], gridPos[f][1], 60, grid[i][f], False).draw(screen)
-    
+            elif grid[i][f] > 19:
+                combatPieceMaker(screen, fight[1], fight[2], i, f)
     for i in range(len(buttonBackers)):
         buttonBackers[i] = (ButtonBacker((i*2) * width/24 + width /22 - 9, height - 3* height/48 - 3, 36, 60, str(spawns[i])))
 
@@ -177,7 +189,7 @@ def gameLogic(screen, mousePressed, gameState):
         trashButton.draw(screen)
         randomButton.draw(screen)
     else:
-        endTurnButton.draw(screen)
+        opponentTurnButton.draw(screen)
 
 
     #Piece Drawing
@@ -204,6 +216,9 @@ def changePlayer():
     else:
         player2[0] = 0
 
+def combatPieceMaker(screen, attacking, defending, i, f):
+    Piece(gridPos[i][0] + 15, gridPos[f][1] + 15, 30, attacking, False).draw(screen)
+    Piece(gridPos[i][0] + 15, gridPos[f][1] - 15, 30, defending, False).draw(screen)
 
 def randomPlacements():
     global pieceChosen
