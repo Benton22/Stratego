@@ -11,12 +11,18 @@ topOutline_image = pygame.image.load("Stratego\\Pieces\\TopOutline.png")
 leftOutline_image = pygame.image.load("Stratego\\Pieces\\LeftOutline.png")
 rightOutline_image = pygame.image.load("Stratego\\Pieces\\RightOutline.png")
 bottomOutline_image = pygame.image.load("Stratego\\Pieces\\BottomOutline.png")
+horizontalThrough_image = pygame.image.load("Stratego\\Pieces\\HorizontalThrough.png")
+verticalThrough_image = pygame.image.load("Stratego\\Pieces\\VerticalThrough.png")
+enemyOutline_image = pygame.image.load("Stratego\\Pieces\\EnemyOutline.png")
 
 fullOutline_image = pygame.transform.scale(fullOutline_image, (width/11 + 2, width/11 + 2))
 topOutline_image = pygame.transform.scale(topOutline_image, (width/11 + 2, width/11 + 2))
 leftOutline_image = pygame.transform.scale(leftOutline_image, (width/11 + 2, width/11 + 2))
 rightOutline_image = pygame.transform.scale(rightOutline_image, (width/11 + 2, width/11 + 2))
 bottomOutline_image = pygame.transform.scale(bottomOutline_image, (width/11 + 2, width/11 + 2))
+horizontalThrough_image = pygame.transform.scale(horizontalThrough_image, (width/11 + 2, width/11 + 2))
+verticalThrough_image = pygame.transform.scale(verticalThrough_image, (width/11 + 2, width/11 + 2))
+enemyOutline_image = pygame.transform.scale(enemyOutline_image, (width/11 + 2, width/11 + 2))
 
 bgray1 = (62, 62, 62)
 bgray2 = (100, 100, 100)
@@ -81,19 +87,28 @@ class Piece ():
         return self.hovering
     
 def moveLogic(type, xIndex, yIndex, potentialMoves, grid):
+    checker = 0
     potentialMoves[xIndex][yIndex][0] = 1
-    potentialMoves[xIndex][yIndex][1] = "Center"
+    
     print(potentialMoves[xIndex][yIndex])
     print(potentialMoves[xIndex][yIndex-1])
     if xIndex > 0 and grid[xIndex -1][yIndex] < 1:
         potentialMoves[xIndex - 1][yIndex][0] = 1
         if grid[xIndex][yIndex] != 9:
             potentialMoves[xIndex - 1][yIndex][1] = "Left"
+            if grid[xIndex - 1][yIndex] < 0:
+                potentialMoves[xIndex - 1][yIndex][1] = "Enemy"
         else:
-            while checker < 10:
-                checker = xIndex
+            checker = xIndex
+            while checker >= 1:
                 print (checker)
-                if xIndex > 0 and grid[checker][yIndex] < 1:
+                if xIndex > 0 and grid[checker - 1][yIndex] < 1:
+                    potentialMoves[checker - 1][yIndex][0] = 1
+                    potentialMoves[checker][yIndex][1] = "Horizontal"
+                    potentialMoves[checker - 1][yIndex][1] = "Left"
+                    if grid [checker - 1][yIndex] < 0:
+                        potentialMoves[checker - 1][yIndex][1] = "Enemy"
+                        break
                     checker -= 1
                 else: 
                     break
@@ -101,14 +116,65 @@ def moveLogic(type, xIndex, yIndex, potentialMoves, grid):
         potentialMoves[xIndex + 1][yIndex][0] = 1
         if grid[xIndex][yIndex] != 9:
             potentialMoves[xIndex + 1][yIndex][1] = "Right"
-    if  yIndex > 1 and grid[xIndex][yIndex-1] < 1:
+            if grid[xIndex + 1][yIndex] < 0:
+                potentialMoves[xIndex + 1][yIndex][1] = "Enemy"
+        else:
+            checker = xIndex
+            while checker < 9:
+                print (checker)
+                if xIndex >= 0 and grid[checker + 1][yIndex] < 1:
+                    potentialMoves[checker + 1][yIndex][0] = 1
+                    potentialMoves[checker][yIndex][1] = "Horizontal"
+                    potentialMoves[checker + 1][yIndex][1] = "Right"
+                    if grid [checker + 1][yIndex] < 0:
+                        potentialMoves[checker + 1][yIndex][1] = "Enemy"
+                        break
+                    checker += 1
+                else: 
+                    break
+    if  yIndex > 0 and grid[xIndex][yIndex-1] < 1:
         potentialMoves[xIndex][yIndex - 1][0] = 1
         if grid[xIndex][yIndex] != 9:
             potentialMoves[xIndex][yIndex - 1][1] = "Up"
+            if grid[xIndex][yIndex-1] < 0:
+                potentialMoves[xIndex][yIndex - 1][1] = "Enemy"
+        else:
+            checker = yIndex
+            while checker < 10:
+                print (checker)
+                if yIndex > 0 and grid[xIndex][checker - 1] < 1:
+                    potentialMoves[xIndex][checker - 1][0] = 1
+                    potentialMoves[xIndex][checker][1] = "Vertical"
+                    potentialMoves[xIndex][checker - 1][1] = "Up"
+                    if grid [xIndex][checker -1] < 0:
+                        potentialMoves[xIndex][checker - 1][1] = "Enemy"
+                        break
+                    checker -= 1
+                else: 
+                    break
+
     if yIndex < 9 and grid[xIndex][yIndex+1] < 1:
         potentialMoves[xIndex][yIndex + 1][0] = 1
         if grid[xIndex][yIndex] != 9:
             potentialMoves[xIndex][yIndex + 1][1] = "Down"
+            if grid[xIndex][yIndex +1] < 0:
+                potentialMoves[xIndex][yIndex +1][1] = "Enemy"
+        else:
+            checker = yIndex
+            while checker < 10:
+                print (checker)
+                if yIndex >= 0 and grid[xIndex][checker + 1] < 1:
+                    potentialMoves[xIndex][checker + 1][0] = 1
+                    potentialMoves[xIndex][checker][1] = "Vertical"
+                    potentialMoves[xIndex][checker + 1][1] = "Down"
+                    if grid [xIndex][checker + 1] < 0:
+                        potentialMoves[xIndex][checker + 1][1] = "Enemy"
+                        break
+                    checker += 1
+                else: 
+                    break
+
+    potentialMoves[xIndex][yIndex][1] = "Center"
     return potentialMoves
 
 def drawPotential(screen, potentialMoves):
@@ -126,3 +192,9 @@ def drawPotential(screen, potentialMoves):
                 screen.blit(rightOutline_image, (locationX + 6, locationY + 3))
             elif potentialMoves[i][j][1] == "Down":
                 screen.blit(bottomOutline_image, (locationX + 6, locationY + 3))
+            elif potentialMoves[i][j][1] == "Horizontal":
+                screen.blit(horizontalThrough_image, (locationX + 6, locationY + 3))
+            elif potentialMoves[i][j][1] == "Vertical":
+                screen.blit(verticalThrough_image, (locationX + 6, locationY + 3))
+            elif potentialMoves[i][j][1] == "Enemy":
+                screen.blit(enemyOutline_image, (locationX + 6, locationY + 3))

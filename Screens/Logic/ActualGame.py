@@ -180,7 +180,6 @@ def gameLogic(screen, mousePressed, gameState):
         endTurnButton.draw(screen)
 
 
-
     #Piece Drawing
     if piecePickedUp:
         pieceOut[0] = Piece(spawnerRed[pieceChosen].locationX, spawnerRed[pieceChosen].locationY, 60, spawnerRed[pieceChosen].type, True)
