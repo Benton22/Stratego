@@ -179,22 +179,18 @@ def combat(tempxIndex, tempyIndex, pieceChosen, xIndex, yIndex, grid):
     if tempyIndex - yIndex >= 1:
         grid[xIndex][yIndex] = 20
         grid[tempxIndex][tempyIndex] = 0
-        print ("Attack from Below")
     #Attack from Above
     elif tempxIndex - xIndex >= 1:
         grid[xIndex][yIndex] = 21
         grid[tempxIndex][tempyIndex] = 0
-        print ("Attack from Right")
     #Attack from Left
     elif xIndex - tempxIndex >= 1:
         grid[xIndex][yIndex] = 22
         grid[tempxIndex][tempyIndex] = 0
-        print ("Attack from Left")
     #Attack from Right
     elif yIndex - tempyIndex >= 1:
         grid[xIndex][yIndex] = 23
         grid[tempxIndex][tempyIndex] = 0
-        print ("Attack from Above")
     return grid, attackingPiece, defendingPiece
 
 
