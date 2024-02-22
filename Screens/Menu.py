@@ -17,7 +17,6 @@ StartButton = BasicButton(width/2 - 70, height/2, 140, 80, "Start", 36)
 
 
 
-
 def MenuScreen(screen, CurrentScreenIndex):
     running = True
 

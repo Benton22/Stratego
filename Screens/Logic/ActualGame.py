@@ -3,7 +3,7 @@ import sys
 import random
 from Screens.Logic.Variables.Globals import globalheight, globalwidth, globalsize, globalbackground, globalwider
 from Screens.Logic.Buttons import PieceSpawner, ButtonBacker, BasicButton, TrashButton
-from Pieces.Pieces import Piece, moveLogic, drawPotential, combat
+from Pieces.Pieces import Piece, moveLogic, drawPotential, combatPositions, combat
 
 height = globalheight
 width = globalwidth
@@ -21,6 +21,7 @@ tempxIndex = [0, 0]
 tempyIndex = [0, 0]
 fightingPieces = []
 turnstate = [0]
+previous_combat = [0]
 
 
 #Grids-------------------------------------------------------------------------Grids
@@ -136,49 +137,68 @@ def gameLogic(screen, mousePressed, gameState):
                 randomPlacements()
         #If gameState != Setup ---------------- moving chosen pieces in game
         else:
+            #pieces picked up
             if turnstate[0] <= 1:
                 if pieceSelected == False and xIndex < 11 and yIndex < 11:
                     pieceChosen = grid[xIndex-1][yIndex-1]
-                    if pieceChosen != 13 and pieceChosen != 0 and pieceChosen != 10 and pieceChosen != 12:
+                    if pieceChosen != 13 and pieceChosen != 0 and pieceChosen != 10 and pieceChosen != 12 and turnstate[0] == 0:
                         tempxIndex[0] = xIndex -1
                         tempyIndex[0] = yIndex -1
-                        if xIndex < 12 and yIndex < 12 and pieceChosen >0 and turnstate[0] == 0:
+                        if xIndex < 12 and yIndex < 12 and pieceChosen >0:
                                 pieceSelected = True
                                 moveLogic(pieceChosen, xIndex -1, yIndex -1, potentialMoves, grid)
-                        elif xIndex == tempxIndex[1] and yIndex == tempyIndex[1] and turnstate[0] == 1:
-                            pieceSelected = True
-                            potentialMoves[tempxIndex[0]][tempyIndex[0]][0] = 1
-                            potentialMoves[tempxIndex[0]][tempyIndex[0]][1] = "Center"
-                        return tempxIndex, tempyIndex
+                    elif xIndex == tempxIndex[1] and yIndex == tempyIndex[1] and turnstate[0] == 1:
+                        pieceSelected = True
+                        potentialMoves[tempxIndex[0]][tempyIndex[0]][0] = 1
+                        potentialMoves[tempxIndex[0]][tempyIndex[0]][1] = "Center"
+                        return turnstate
+                    #placing piece back down
                 else:
                     if xIndex < 11 and yIndex < 11 and potentialMoves[xIndex - 1][yIndex - 1][0] == 1:
                         pieceSelected = False
-                        tempxIndex[1] = xIndex
-                        tempyIndex[1] = yIndex
-                        turnstate[0] = 1
-                        if potentialMoves[xIndex -1][yIndex -1][1] == "Enemy":
-                            fight = combat(tempxIndex[0], tempyIndex[0], pieceChosen, xIndex -1, yIndex - 1, grid)
-                            fightingPieces.append(fight[1])
-                            fightingPieces.append(fight[2])
+                        if turnstate[0] == 0:
+                            tempxIndex[1] = xIndex
+                            tempyIndex[1] = yIndex
+                            turnstate[0] = 1
+                            if potentialMoves[xIndex -1][yIndex -1][1] == "Enemy":
+                                fight = combatPositions(tempxIndex[0], tempyIndex[0], pieceChosen, xIndex -1, yIndex - 1, grid, previous_combat)
+                                fightingPieces.append(fight[1])
+                                fightingPieces.append(fight[2])
+                            else:
+                                if tempxIndex[0] == xIndex - 1 and tempyIndex[0] == yIndex -1:
+                                    turnstate[0] = 0
+                                grid[tempxIndex[0]][tempyIndex[0]] = 0
+                                grid[xIndex -1][yIndex - 1] = pieceChosen
                         else:
-                            grid[tempxIndex[0]][tempyIndex[0]] = 0
-                            grid[xIndex -1][yIndex - 1] = pieceChosen
+                                grid[tempxIndex[1]-1][tempyIndex[1]-1] = 0
+                                grid[xIndex -1][yIndex - 1] = pieceChosen
+                                turnstate[0] = 0
                         for i in range (0,10):
                             for j in range (0,10):
                                 potentialMoves[i][j][0] = 0
                                 potentialMoves[i][j][1] = 1
-            if confirmButton.over_button() and turnstate[0] == 1:
-                turnstate [0] = 2
+                        
+            if confirmButton.over_button() and turnstate[0] <= 1:
+                if turnstate[0] == 1:
+                    turnstate [0] = 2
+                    if grid[tempxIndex[1] -1][tempyIndex[1] -1] >= 20:
+                        combat(fightingPieces [0], fightingPieces [1], tempxIndex [1], tempyIndex [1], grid)
+                        turnstate[0] = 3
+                elif turnstate[0] == -1:
+                    turnstate [0] = 0
+            elif opponentTurnButton.over_button() and turnstate[0] >= 2:
+                changePlayer()
+                if turnstate[0] == 2:
+                    turnstate [0] = 0
+                else:
+                    turnstate[0] = -1
             if undoButton.over_button() and turnstate[0] == 1:
                 turnstate [0] = 2
-            elif opponentTurnButton.over_button() and turnstate[0] == 2:
-                print(turnstate)
-                changePlayer()
-                turnstate [0] = 0
+
     #UI -----------------------------------------------------------------------------------------------UI
     drawPotential(screen, potentialMoves)
 
-    print ("tempIndex[0] =", tempxIndex[0], tempyIndex[0], "tempIndex[1] =", tempxIndex[1], tempyIndex[1], "Mouse Index = ", xIndex, yIndex)
+    print ("tempIndex[0] =", tempxIndex[0], tempyIndex[0], "tempIndex[1] =", tempxIndex[1], tempyIndex[1], "Mouse Index = ", xIndex, yIndex, turnstate, previous_combat)
     for i in range(len(grid)):
         for f in range(len(grid)):
             if grid[i][f] != 0 and grid[i][f] < 13:
@@ -200,9 +220,9 @@ def gameLogic(screen, mousePressed, gameState):
         trashButton.draw(screen)
         randomButton.draw(screen)
     else:
-        if turnstate[0] == 1:
+        if turnstate[0] == 1 or turnstate[0] == -1:
             confirmButton.draw(screen)
-        elif turnstate[0] == 2:
+        elif turnstate[0] >= 2:
             opponentTurnButton.draw(screen)
     #Piece Drawing
     if piecePickedUp:

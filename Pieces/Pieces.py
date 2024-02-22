@@ -171,7 +171,7 @@ def moveLogic(type, xIndex, yIndex, potentialMoves, grid):
     potentialMoves[xIndex][yIndex][1] = "Center"
     return potentialMoves
 
-def combat(tempxIndex, tempyIndex, pieceChosen, xIndex, yIndex, grid):
+def combatPositions(tempxIndex, tempyIndex, pieceChosen, xIndex, yIndex, grid, previous_combat):
     attackingPiece = pieceChosen
     defendingPiece = grid[xIndex][yIndex]
     print(attackingPiece, defendingPiece)
@@ -191,8 +191,17 @@ def combat(tempxIndex, tempyIndex, pieceChosen, xIndex, yIndex, grid):
     elif yIndex - tempyIndex >= 1:
         grid[xIndex][yIndex] = 23
         grid[tempxIndex][tempyIndex] = 0
-    return grid, attackingPiece, defendingPiece
+    previous_combat[0] = grid[xIndex][yIndex]
+    return grid, attackingPiece, defendingPiece, previous_combat
 
+def combat(attacker, defender, xIndex, yIndex, grid):
+    if attacker > abs(defender):
+        grid[xIndex -1][yIndex -1] = attacker
+    elif attacker == abs(defender):
+        grid[xIndex -1][yIndex -1] = 0
+    elif attacker < abs(defender):
+        grid[xIndex -1][yIndex -1] = defender
+    return grid
 
 def drawPotential(screen, potentialMoves):
     for i in range(0, 10):
