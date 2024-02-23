@@ -73,11 +73,12 @@ class Piece ():
 
         if self.hovering == True:
             pygame.draw.rect(screen, bgray2, self.innerSquare)
-        if self.png == False:
-            self.text_rect = self.text_surface.get_rect(center=(self.locationX + self.size / 2, self.locationY + self.size / 2))
-            screen.blit(self.text_surface, self.text_rect)
-        else:
-            screen.blit(self.image, (self.locationX + self.Bezel, self.locationY + self.Bezel))
+        if self.type >= 0:
+            if self.png == False:
+                self.text_rect = self.text_surface.get_rect(center=(self.locationX + self.size / 2, self.locationY + self.size / 2))
+                screen.blit(self.text_surface, self.text_rect)
+            else:
+                screen.blit(self.image, (self.locationX + self.Bezel, self.locationY + self.Bezel))
         
 
     

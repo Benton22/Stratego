@@ -140,17 +140,21 @@ def gameLogic(screen, mousePressed, gameState):
             #pieces picked up
             if turnstate[0] <= 1:
                 if pieceSelected == False and xIndex < 11 and yIndex < 11:
-                    pieceChosen = grid[xIndex-1][yIndex-1]
+                    if grid[xIndex -1][yIndex - 1] < 19:
+                        pieceChosen = grid[xIndex-1][yIndex-1]
                     if pieceChosen != 13 and pieceChosen != 0 and pieceChosen != 10 and pieceChosen != 12 and turnstate[0] == 0:
                         tempxIndex[0] = xIndex -1
                         tempyIndex[0] = yIndex -1
                         if xIndex < 12 and yIndex < 12 and pieceChosen >0:
                                 pieceSelected = True
                                 moveLogic(pieceChosen, xIndex -1, yIndex -1, potentialMoves, grid)
+                    #If you're trying to move the piece back
                     elif xIndex == tempxIndex[1] and yIndex == tempyIndex[1] and turnstate[0] == 1:
                         pieceSelected = True
                         potentialMoves[tempxIndex[0]][tempyIndex[0]][0] = 1
                         potentialMoves[tempxIndex[0]][tempyIndex[0]][1] = "Center"
+                        potentialMoves[tempxIndex[1] -1][tempyIndex[1] -1][0] = 1
+                        potentialMoves[tempxIndex[1] -1][tempyIndex[1] -1][1] = "Center"
                         return turnstate
                     #placing piece back down
                 else:
@@ -170,7 +174,10 @@ def gameLogic(screen, mousePressed, gameState):
                                 grid[tempxIndex[0]][tempyIndex[0]] = 0
                                 grid[xIndex -1][yIndex - 1] = pieceChosen
                         else:
-                                grid[tempxIndex[1]-1][tempyIndex[1]-1] = 0
+                                if grid[tempxIndex[1] -1][tempyIndex[1] -1] < 19:
+                                    grid[tempxIndex[1]-1][tempyIndex[1]-1] = 0
+                                else:
+                                    grid[tempxIndex[1] -1][tempyIndex[1] -1] = fightingPieces[1]
                                 grid[xIndex -1][yIndex - 1] = pieceChosen
                                 turnstate[0] = 0
                         for i in range (0,10):
@@ -178,15 +185,18 @@ def gameLogic(screen, mousePressed, gameState):
                                 potentialMoves[i][j][0] = 0
                                 potentialMoves[i][j][1] = 1
                         
-            if confirmButton.over_button() and turnstate[0] <= 1:
+            if confirmButton.over_button() and (turnstate[0] <= 1 or turnstate[0] == 3):
                 if turnstate[0] == 1:
                     turnstate [0] = 2
                     if grid[tempxIndex[1] -1][tempyIndex[1] -1] >= 20:
-                        combat(fightingPieces [0], fightingPieces [1], tempxIndex [1], tempyIndex [1], grid)
+                        #Display the enemy fighting piece here
                         turnstate[0] = 3
+                elif turnstate[0] == 3:
+                    combat(fightingPieces [0], fightingPieces [1], tempxIndex [1], tempyIndex [1], grid)
+                    turnstate[0] = 2
                 elif turnstate[0] == -1:
                     turnstate [0] = 0
-            elif opponentTurnButton.over_button() and turnstate[0] >= 2:
+            elif opponentTurnButton.over_button() and turnstate[0] == 2:
                 changePlayer()
                 if turnstate[0] == 2:
                     turnstate [0] = 0
@@ -220,9 +230,9 @@ def gameLogic(screen, mousePressed, gameState):
         trashButton.draw(screen)
         randomButton.draw(screen)
     else:
-        if turnstate[0] == 1 or turnstate[0] == -1:
+        if turnstate[0] == 1 or turnstate[0] == -1 or turnstate[0] == 3:
             confirmButton.draw(screen)
-        elif turnstate[0] >= 2:
+        elif turnstate[0] == 2:
             opponentTurnButton.draw(screen)
     #Piece Drawing
     if piecePickedUp:
