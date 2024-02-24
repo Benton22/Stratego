@@ -214,7 +214,10 @@ def gameLogic(screen, mousePressed, gameState):
             if grid[i][f] != 0 and grid[i][f] < 13:
                 Piece(gridPos[i][0], gridPos[f][1], 60, grid[i][f], False).draw(screen)
             elif grid[i][f] > 19:
-                combatPieceMaker(screen, fightingPieces [0], fightingPieces[1], i, f)
+                if turnstate[0] <= 2:
+                    combatPieceMaker(screen, fightingPieces [0], fightingPieces[1], i, f)
+                else:
+                    combatPieceMaker(screen, fightingPieces[0], abs(fightingPieces[1]), i, f)
     for i in range(len(buttonBackers)):
         buttonBackers[i] = (ButtonBacker((i*2) * width/24 + width /22 - 9, height - 3* height/48 - 3, 36, 60, str(spawns[i])))
 
