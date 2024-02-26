@@ -42,20 +42,19 @@ class Piece ():
         self.innerSquare = pygame.Rect(self.locationX + self.Bezel, self.locationY + self.Bezel, self.size - 2 * self.Bezel, self.size - 2 * self.Bezel)
         self.moving = moving
         self.turnstate = turnstate
-
+        self.txt = str(abs(self.type))
         #Creation of bomb and text surfaces----------------------------Creation of bomb and text surfaces
-        if self.type < 10:
-            self.text = str(self.type)
+        if self.type < 10 and self.type > -10:
+            self.txt = str(abs(self.type))
             self.png = False
-        elif self.type == 12:
+        elif self.type == 12 or self.type == -12:
             self.image = flag_image
-        elif self.type == 11:
-            self.text = "S"
+        elif self.type == 11 or self.type == -11:
+            self.txt = "S"
             self.png = False
-        elif self.type == 10:
+        elif self.type == 10 or self.type == -10:
             self.image = bomb_image
         if self.png == False:
-            self.txt = str(abs(self.type))
             font = pygame.font.Font(pygame.font.get_default_font(), 22)
             self.text_surface = font.render(self.txt, True, (255,255,255))
         else:
@@ -63,7 +62,8 @@ class Piece ():
         
     #Drawing all of the pieces --------------------------------------Drawing all of the pieces
     def draw(self, screen):
-        
+
+
         if self.moving:
             mouseXdrag, mouseYdrag = pygame.mouse.get_pos()
             self.locationX = mouseXdrag - self.size/2
@@ -74,7 +74,6 @@ class Piece ():
         pygame.draw.rect(screen, bgray3, self.outerSquare)
 
         self.over_Piece()
-
         if self.turnstate[1] == 0:
             if self.type < 0:
                 pygame.draw.rect(screen, bgray4, self.innerSquare)
@@ -224,11 +223,11 @@ def combatPositions(tempxIndex, tempyIndex, pieceChosen, xIndex, yIndex, grid, p
     return grid, attackingPiece, defendingPiece, previous_combat
 
 def combat(attacker, defender, xIndex, yIndex, grid):
-    if attacker > abs(defender):
+    if attacker < abs(defender):
         grid[xIndex -1][yIndex -1] = attacker
     elif attacker == abs(defender):
         grid[xIndex -1][yIndex -1] = 0
-    elif attacker < abs(defender):
+    elif attacker > abs(defender):
         grid[xIndex -1][yIndex -1] = defender
     return grid
 
