@@ -18,7 +18,7 @@ pieceOut = [""]
 player2Turn = False
 tempxIndex = [0, 0]
 tempyIndex = [0, 0]
-fightingPieces = []
+fightingPieces = [0, 0]
 turnstate = [0, 0]
 previous_combat = [0]
 
@@ -163,8 +163,8 @@ def gameLogic(screen, mousePressed, gameState):
                             turnstate[0] = 1
                             if potentialMoves[xIndex -1][yIndex -1][1] == "Enemy":
                                 fight = combatPositions(tempxIndex[0], tempyIndex[0], pieceChosen, xIndex -1, yIndex - 1, grid, previous_combat)
-                                fightingPieces.append(fight[1])
-                                fightingPieces.append(fight[2])
+                                fightingPieces[0] = (fight[1])
+                                fightingPieces[1] = (fight[2])
                             else:
                                 if tempxIndex[0] == xIndex - 1 and tempyIndex[0] == yIndex -1:
                                     turnstate[0] = 0
@@ -186,9 +186,9 @@ def gameLogic(screen, mousePressed, gameState):
                 if turnstate[0] == 1:
                     turnstate [0] = 2
                     if grid[tempxIndex[1] -1][tempyIndex[1] -1] >= 20:
-                        #Display the enemy fighting piece here
                         turnstate[0] = 3
                 elif turnstate[0] == 3:
+                    #Display the enemy fighting piece here
                     combat(fightingPieces [0], fightingPieces [1], tempxIndex [1], tempyIndex [1], grid)
                     turnstate[0] = 2
                 elif turnstate[0] == -1:
@@ -205,17 +205,14 @@ def gameLogic(screen, mousePressed, gameState):
     #UI -----------------------------------------------------------------------------------------------UI
     drawPotential(screen, potentialMoves)
 
-    print ("tempIndex[0] =", tempxIndex[0], tempyIndex[0], "tempIndex[1] =", tempxIndex[1], tempyIndex[1], "Mouse Index = ", xIndex, yIndex, turnstate, previous_combat)
+    #print ("tempIndex[0] =", tempxIndex[0], tempyIndex[0], "tempIndex[1] =", tempxIndex[1], tempyIndex[1], "Mouse Index = ", xIndex, yIndex, turnstate, previous_combat)
     #Button logic and drawing the pieces when the fight is happening
     for i in range(len(grid)):
         for f in range(len(grid)):
             if grid[i][f] != 0 and grid[i][f] < 13:
                 Piece(gridPos[i][0], gridPos[f][1], 60, grid[i][f], False, turnstate).draw(screen)
             elif grid[i][f] > 19:
-                #if turnstate[0] <= 2:
                 combatPieceMaker(screen, fightingPieces [0], fightingPieces[1], i, f)
-                #else:
-                    #combatPieceMaker(screen, fightingPieces[0], abs(fightingPieces[1]), i, f)
     for i in range(len(buttonBackers)):
         buttonBackers[i] = (ButtonBacker((i*2) * width/24 + width /22 - 9, height - 3* height/48 - 3, 36, 60, str(spawns[i])))
 
