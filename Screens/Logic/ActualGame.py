@@ -75,7 +75,9 @@ def gameLogic(screen, mousePressed, gameState):
     gameStateLocal = gameState
     xIndex, yIndex = gridIndexer()
     keys = pygame.key.get_pressed()
-    
+    if gameStateLocal == "Victory":
+        print ("Game Over")
+    print(gameStateLocal)
     #Mouse Pressed Logic--------------------------------------------------------------Mouse Pressed Logic
    
     if mousePressed:
@@ -137,7 +139,7 @@ def gameLogic(screen, mousePressed, gameState):
             #pieces picked up
             if turnstate[0] <= 1:
                 if pieceSelected == False and xIndex < 11 and yIndex < 11:
-                    if grid[xIndex -1][yIndex - 1] < 19:
+                    if grid[xIndex -1][yIndex - 1] < 19 and turnstate[0] == 0:
                         pieceChosen = grid[xIndex-1][yIndex-1]
                     if pieceChosen != 13 and pieceChosen != 0 and pieceChosen != 10 and pieceChosen != 12 and turnstate[0] == 0:
                         tempxIndex[0] = xIndex -1
@@ -148,6 +150,7 @@ def gameLogic(screen, mousePressed, gameState):
                     #If you're trying to move the piece back
                     elif xIndex == tempxIndex[1] and yIndex == tempyIndex[1] and turnstate[0] == 1:
                         pieceSelected = True
+                        #pieceChosen = grid[xIndex -1][yIndex -1]
                         potentialMoves[tempxIndex[0]][tempyIndex[0]][0] = 1
                         potentialMoves[tempxIndex[0]][tempyIndex[0]][1] = "Center"
                         potentialMoves[tempxIndex[1] -1][tempyIndex[1] -1][0] = 1
@@ -171,12 +174,16 @@ def gameLogic(screen, mousePressed, gameState):
                                 grid[tempxIndex[0]][tempyIndex[0]] = 0
                                 grid[xIndex -1][yIndex - 1] = pieceChosen
                         else:
-                                if grid[tempxIndex[1] -1][tempyIndex[1] -1] < 19:
-                                    grid[tempxIndex[1]-1][tempyIndex[1]-1] = 0
+                                if xIndex == tempxIndex[1] and yIndex == tempyIndex[1]:
+                                    turnstate[0] = 1
                                 else:
-                                    grid[tempxIndex[1] -1][tempyIndex[1] -1] = fightingPieces[1]
-                                grid[xIndex -1][yIndex - 1] = pieceChosen
-                                turnstate[0] = 0
+                                    if grid[tempxIndex[1] -1][tempyIndex[1] -1] < 19:
+                                        grid[tempxIndex[1]-1][tempyIndex[1]-1] = 0
+                                    else:
+                                        grid[tempxIndex[1] -1][tempyIndex[1] -1] = fightingPieces[1]
+                                    turnstate[0] = 0
+                                    grid[xIndex -1][yIndex - 1] = pieceChosen
+
                         for i in range (0,10):
                             for j in range (0,10):
                                 potentialMoves[i][j][0] = 0
@@ -189,7 +196,8 @@ def gameLogic(screen, mousePressed, gameState):
                         turnstate[0] = 3
                 elif turnstate[0] == 3:
                     #Display the enemy fighting piece here
-                    combat(fightingPieces [0], fightingPieces [1], tempxIndex [1], tempyIndex [1], grid)
+                    combat(fightingPieces [0], fightingPieces [1], tempxIndex [1], tempyIndex [1], grid, gameState)
+                    gameStateLocal = (combat(fightingPieces [0], fightingPieces [1], tempxIndex [1], tempyIndex [1], grid, gameState)[1])
                     turnstate[0] = 2
                 elif turnstate[0] == -1:
                     turnstate [0] = 0
@@ -201,7 +209,8 @@ def gameLogic(screen, mousePressed, gameState):
                     turnstate[0] = -1
             if undoButton.over_button() and turnstate[0] == 1:
                 turnstate [0] = 2
-
+    
+    #print(tempxIndex, tempyIndex, xIndex, yIndex, turnstate, pieceChosen)
     #UI -----------------------------------------------------------------------------------------------UI
     drawPotential(screen, potentialMoves)
 

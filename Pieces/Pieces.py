@@ -222,14 +222,26 @@ def combatPositions(tempxIndex, tempyIndex, pieceChosen, xIndex, yIndex, grid, p
     previous_combat[0] = grid[xIndex][yIndex]
     return grid, attackingPiece, defendingPiece, previous_combat
 
-def combat(attacker, defender, xIndex, yIndex, grid):
-    if attacker < abs(defender):
+#bomb = 10, flag = 12, spy = 11
+def combat(attacker, defender, xIndex, yIndex, grid, gameState):
+    if abs(defender) == 10:
+        if attacker != 8:
+            grid[xIndex -1][yIndex -1] = 0
+        else:
+            grid[xIndex -1][yIndex -1] = 8
+    elif attacker == 11:
+        if abs(defender) == 1:
+            grid[xIndex -1][yIndex -1] = 11
+    elif abs(defender) == 12:
+        gameState = "Victory"
+        grid[xIndex -1][yIndex -1] = attacker
+    elif attacker < abs(defender):
         grid[xIndex -1][yIndex -1] = attacker
     elif attacker == abs(defender):
         grid[xIndex -1][yIndex -1] = 0
     elif attacker > abs(defender):
         grid[xIndex -1][yIndex -1] = defender
-    return grid
+    return grid, gameState
 
 def drawPotential(screen, potentialMoves):
     for i in range(0, 10):
