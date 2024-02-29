@@ -19,7 +19,8 @@ player2Turn = False
 tempxIndex = [0, 0]
 tempyIndex = [0, 0]
 fightingPieces = [0, 0]
-turnstate = [0, 0]
+#Cycling through actual turnstates, Player 1 or Player 2, between turn screen
+turnstate = [0, 0, 0]
 previous_combat = [0]
 
 
@@ -65,6 +66,9 @@ trashButton = TrashButton(width + (globalwider - width)/10, 11 * height/12 - hei
 randomButton = BasicButton(width + (globalwider - width)/10, 3 * height/12 + 2 * height/48, 8 * (globalwider - width)/10, height/12, "Random", 34)
 confirmButton = BasicButton(width + (globalwider - width)/10, height/12, 8 * (globalwider - width)/10, height/12, "Confirm", 30)
 undoButton = BasicButton(width + (globalwider - width)/10, 2 * height/12 + height/48, 8 * (globalwider - width)/10, height/12, "Undo", 34)
+screencover = BasicButton(width/2 - 250, width/2, 500, 150, "Other Player", 56)
+
+darksquare = pygame.Rect(0, width/12 + 12, width + 6, width + 6)
 
 
 
@@ -203,12 +207,15 @@ def gameLogic(screen, mousePressed, gameState):
                     turnstate [0] = 0
             elif opponentTurnButton.over_button() and turnstate[0] == 2:
                 changePlayer()
+                turnstate[2] = 1
                 if turnstate[0] == 2:
                     turnstate [0] = 0
                 else:
                     turnstate[0] = -1
             if undoButton.over_button() and turnstate[0] == 1:
                 turnstate [0] = 2
+            if screencover.over_button() and turnstate[2] == 1:
+                turnstate[2] = 0
     
     #print(tempxIndex, tempyIndex, xIndex, yIndex, turnstate, pieceChosen)
     #UI -----------------------------------------------------------------------------------------------UI
@@ -245,6 +252,13 @@ def gameLogic(screen, mousePressed, gameState):
     if piecePickedUp:
         pieceOut[0] = Piece(spawnerRed[pieceChosen].locationX, spawnerRed[pieceChosen].locationY, 60, spawnerRed[pieceChosen].type, True, turnstate)
         pieceOut[0].draw(screen)
+
+    #Screen cover between players
+    if turnstate[2] == 1:
+        pygame.draw.rect(screen,(40, 40, 40), darksquare)  
+        screencover.draw(screen)  
+    
+    
     return gameStateLocal
 
 def changePlayer():
