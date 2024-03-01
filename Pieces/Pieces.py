@@ -77,7 +77,7 @@ class Piece ():
         if self.turnstate[1] == 0:
             if self.type < 0:
                 pygame.draw.rect(screen, bgray4, self.innerSquare)
-                if self.turnstate[0] == 3 and self.size == 40:
+                if (self.turnstate[0] == 3 or self.turnstate[0] == -1) and self.size == 40:
                     if self.png == False:
                         self.text_rect = self.text_surface.get_rect(center=(self.locationX + self.size / 2, self.locationY + self.size / 2))
                         screen.blit(self.text_surface, self.text_rect)
@@ -93,7 +93,7 @@ class Piece ():
         else:
             if self.type < 0:
                 pygame.draw.rect(screen, bgray2, self.innerSquare)
-                if self.turnstate[0] == 3 and self.size == 40:
+                if (self.turnstate[0] == 3 or self.turnstate[0] == -1) and self.size == 40:
                     if self.png == False:
                         self.text_rect = self.text_surface.get_rect(center=(self.locationX + self.size / 2, self.locationY + self.size / 2))
                         screen.blit(self.text_surface, self.text_rect)
@@ -202,7 +202,6 @@ def moveLogic(type, xIndex, yIndex, potentialMoves, grid):
 def combatPositions(tempxIndex, tempyIndex, pieceChosen, xIndex, yIndex, grid, previous_combat):
     attackingPiece = pieceChosen
     defendingPiece = grid[xIndex][yIndex]
-    print(attackingPiece, defendingPiece)
     #Attack from Below
     if tempyIndex - yIndex >= 1:
         grid[xIndex][yIndex] = 20
@@ -223,7 +222,11 @@ def combatPositions(tempxIndex, tempyIndex, pieceChosen, xIndex, yIndex, grid, p
     return grid, attackingPiece, defendingPiece, previous_combat
 
 #bomb = 10, flag = 12, spy = 11
-def combat(attacker, defender, xIndex, yIndex, grid, gameState):
+def combat(attacker, defender, xIndex, yIndex, grid, gameState, turnstate):
+    if turnstate[0] == -1:
+        ta = -attacker
+        attacker = -defender
+        defender = ta
     if abs(defender) == 10:
         if attacker != 8:
             grid[xIndex -1][yIndex -1] = 0
@@ -241,6 +244,7 @@ def combat(attacker, defender, xIndex, yIndex, grid, gameState):
         grid[xIndex -1][yIndex -1] = 0
     elif attacker > abs(defender):
         grid[xIndex -1][yIndex -1] = defender
+
     return grid, gameState
 
 def drawPotential(screen, potentialMoves):
