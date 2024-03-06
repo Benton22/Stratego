@@ -102,7 +102,7 @@ def gameLogic(screen, mousePressed, gameState):
                 else:
                     #Creation of piece with spawner buttons
                     for button in range(len(buttonBackers)):
-                        if spawnerRed[button].over_button() and spawns[button] > 0:
+                        if spawnerRed[button].over_button() and spawns[button] > 0 and turnstate[2] == 0:
                             spawns[button] -= 1
                             buttonBackers[button].number = spawns[button]
                             piecePickedUp = True
@@ -119,7 +119,7 @@ def gameLogic(screen, mousePressed, gameState):
                     else:
                         piecePickedUp = False
             #Finish Button
-            if finishButton.over_button()  and turnstate[2] == 0:
+            if finishButton.over_button()  and turnstate[2] == 0 and piecePickedUp == False:
                 if all(value == 0 for value in spawns):
                     if player2Turn == True:
                         gameStateLocal = "Playing"
@@ -142,7 +142,7 @@ def gameLogic(screen, mousePressed, gameState):
         else:
             #pieces picked up
             if turnstate[0] <= 1:
-                if pieceSelected == False and xIndex < 11 and yIndex < 11:
+                if pieceSelected == False and xIndex < 11 and yIndex < 11 and turnstate[2] == 0:
                     if grid[xIndex -1][yIndex - 1] < 19 and turnstate[0] == 0:
                         pieceChosen = grid[xIndex-1][yIndex-1]
                     if pieceChosen != 13 and pieceChosen != 0 and pieceChosen != 10 and pieceChosen != 12 and turnstate[0] == 0:
@@ -194,7 +194,7 @@ def gameLogic(screen, mousePressed, gameState):
                                 potentialMoves[i][j][0] = 0
                                 potentialMoves[i][j][1] = 1
                         
-            if confirmButton.over_button() and (turnstate[0] <= 1 or turnstate[0] == 3) and turnstate[2] == 0:
+            if confirmButton.over_button() and (turnstate[0] <= 1 or turnstate[0] == 3) and turnstate[2] == 0 and pieceSelected == False:
                 if turnstate[0] == 1:
                     turnstate [0] = 2
                     if grid[tempxIndex[1] -1][tempyIndex[1] -1] >= 20:
@@ -217,16 +217,7 @@ def gameLogic(screen, mousePressed, gameState):
                 turnstate [0] = 2
         if screencover.over_button() and turnstate[2] == 1:
             turnstate[2] = 0
-    """            for i in range(10):
-                for j in range(10):
-                    if grid[i][j] == 20:
-                        grid[i][j] = 21
-                    elif grid[i][j] == 21:
-                        grid[i][j] = 20
-                    elif grid[i][j] == 22:
-                        grid[i][j] = 23
-                    elif grid[i][j] == 23:
-                        grid[i][j] = 22"""
+
     
     #print(tempxIndex, tempyIndex, xIndex, yIndex, turnstate, pieceChosen)
     #UI -----------------------------------------------------------------------------------------------UI
