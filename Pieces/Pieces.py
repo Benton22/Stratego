@@ -228,13 +228,23 @@ def combat(attacker, defender, xIndex, yIndex, grid, gameState, turnstate):
         attacker = -defender
         defender = ta
     if abs(defender) == 10:
-        if attacker != 8:
+        if abs(attacker) != 8:
             grid[xIndex -1][yIndex -1] = 0
         else:
-            grid[xIndex -1][yIndex -1] = 8
+            grid[xIndex -1][yIndex -1] = attacker
+    if abs(attacker) == 10:
+        if abs(defender) != 8:
+            grid[xIndex -1][yIndex -1] = 0
+        else:
+            grid[xIndex -1][yIndex -1] = defender
     elif attacker == 11:
         if abs(defender) == 1:
             grid[xIndex -1][yIndex -1] = 11
+        elif abs(defender) == 12:
+            gamestate = "Victory"
+            grid[xIndex -1][yIndex -1] = attacker
+        else:
+            grid[xIndex -1][yIndex -1] = defender
     elif abs(defender) == 12:
         gameState = "Victory"
         grid[xIndex -1][yIndex -1] = attacker
