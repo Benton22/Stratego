@@ -219,7 +219,7 @@ def gameLogic(screen, mousePressed, gameState):
             turnstate[2] = 0
 
     
-    #print(tempxIndex, tempyIndex, xIndex, yIndex, turnstate, pieceChosen)
+    print(tempxIndex, tempyIndex, xIndex, yIndex, turnstate, pieceChosen)
     #UI -----------------------------------------------------------------------------------------------UI
     drawPotential(screen, potentialMoves)
 
@@ -246,6 +246,8 @@ def gameLogic(screen, mousePressed, gameState):
         trashButton.draw(screen)
         randomButton.draw(screen)
     else:
+        if turnstate[2] != 0:
+            break
         if turnstate[0] == 1 or turnstate[0] == -1 or turnstate[0] == 3:
             confirmButton.draw(screen)
         elif turnstate[0] == 2:
@@ -290,7 +292,7 @@ def changePlayer():
 
 def combatPieceMaker(screen, attacking, defending, i, f):
     if turnstate[0] == -1:
-        print(attacking, defending)
+        #print(attacking, defending)
         if grid[i][f] == 20:
             Piece(gridPos[i][0] + 11, gridPos[f][1] + 31, 40, - 1 * defending, False, turnstate).draw(screen)
             Piece(gridPos[i][0] + 11, gridPos[f][1] - 12, 40, - 1 *  attacking, False, turnstate).draw(screen)
@@ -304,7 +306,7 @@ def combatPieceMaker(screen, attacking, defending, i, f):
             Piece(gridPos[i][0] - 11, gridPos[f][1] + 11, 40, - 1 *  defending, False, turnstate).draw(screen)
             Piece(gridPos[i][0] + 31, gridPos[f][1] + 11, 40, - 1 *  attacking, False, turnstate).draw(screen)
     else:
-        print(attacking, defending)
+        #print(attacking, defending)
         if grid[i][f] == 20:
             Piece(gridPos[i][0] + 11, gridPos[f][1] + 31, 40, attacking, False, turnstate).draw(screen)
             Piece(gridPos[i][0] + 11, gridPos[f][1] - 12, 40, defending, False, turnstate).draw(screen)
